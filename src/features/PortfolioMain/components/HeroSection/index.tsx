@@ -5,6 +5,7 @@ export const HeroSection = ({
   heroRef,
   mousePosition,
   scrollToSection,
+  scrollY,
 }: {
   heroRef: RefObject<HTMLElement | null>;
   mousePosition: {
@@ -12,6 +13,7 @@ export const HeroSection = ({
     y: number;
   };
   scrollToSection: (sectionId: string) => void;
+  scrollY: number;
 }) => {
   return (
     <section
