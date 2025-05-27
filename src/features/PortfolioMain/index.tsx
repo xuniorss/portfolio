@@ -1,6 +1,6 @@
 import { Cursor } from "@/components/Cursor";
 import { Navbar } from "@/components/Navbar";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { HeroSection } from "./components/HeroSection";
 import { AboutSection } from "./components/AboutSection";
 import { SkillsSection } from "./components/SkillsSection";
@@ -20,6 +20,44 @@ export const PortfolioMain = () => {
   const skillsRef = useRef<HTMLElement | null>(null);
   const projectsRef = useRef<HTMLElement | null>(null);
   const contactRef = useRef<HTMLElement | null>(null);
+
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      setMousePosition({ x: e.clientX, y: e.clientY });
+    };
+
+    const handleScroll = () => {
+      setScrollY(window.scrollY);
+
+      const sections = [
+        { id: "home", ref: heroRef },
+        { id: "about", ref: aboutRef },
+        { id: "skills", ref: skillsRef },
+        { id: "projects", ref: projectsRef },
+        { id: "contact", ref: contactRef },
+      ];
+
+      const currentSection = sections.find((section) => {
+        if (section.ref.current) {
+          const rect = section.ref.current.getBoundingClientRect();
+          return rect.top <= 100 && rect.bottom >= 100;
+        }
+        return false;
+      });
+
+      if (currentSection) {
+        setActiveSection(currentSection.id);
+      }
+    };
+
+    window.addEventListener("mousemove", handleMouseMove);
+    window.addEventListener("scroll", handleScroll);
+
+    return () => {
+      window.removeEventListener("mousemove", handleMouseMove);
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
 
   const scrollToSection = (sectionId: string) => {
     const refs: { [key: string]: React.RefObject<HTMLElement | null> } = {
@@ -48,6 +86,7 @@ export const PortfolioMain = () => {
         heroRef={heroRef}
         mousePosition={mousePosition}
         scrollToSection={scrollToSection}
+        scrollY={scrollY}
       />
 
       <AboutSection aboutRef={aboutRef} />
